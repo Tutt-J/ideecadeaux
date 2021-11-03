@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription | {{ parent() }}{% endblock %}
+
+{% block body %}
+    <section class="container my-3 mb-5">
+        <h1>Inscription</h1>
+        <p class="my-4"><em >Vous pourrez ensuite rejoindre ou créer une famille</em></p>
+        {{ form(registrationForm) }}
+    </section>
+
+{% endblock %}
