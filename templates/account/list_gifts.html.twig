@@ -1,0 +1,61 @@
+{% extends "account/base.html.twig" %}
+
+{% block body %}
+    <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-2 text-gray-800">Liste de cadeau(x) de {{ user.firstName }} {{ user.lastName }}</h1>
+        </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Liste</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Lien</th>
+                        <th>Details</th>
+                        <th>Prix</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Lien</th>
+                        <th>Details</th>
+                        <th>Prix</th>
+                        <th>Actions</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for gift in user.gifts %}
+                        <tr>
+                            <td>{{ gift.name }}</td>
+                            <td><a href="{{ gift.url }}">{{ gift.url }}</a></td>
+                            <td>{{ gift.details }}</td>
+                            <td>{{ gift.price }}€</td>
+                            <td>
+                            {% if user != app.user %}
+                                    {% if gift.alreadyBuy == 1 %}
+                                        Déjà réservé
+                                    {% else %}
+                                        <a href="{{ path('buyGift', {'id' : user.id, 'gift': gift.id}) }}" title="Réserver">Je l'ai acheté</a>
+                                    {% endif %}
+                             {% else %}
+                                 <a href="{{ path('editGift', {'id' : gift.id}) }}" title="Editer">Editer</a>
+                            {% endif %}
+                            </td>
+
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

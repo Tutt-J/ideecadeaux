@@ -1,0 +1,36 @@
+{% extends "account/base.html.twig" %}
+
+{% block body %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Demander/Editer un cadeau</h1>
+    </div>
+    <div>
+        {{ form_start(form, {'attr': {'class': 'flex-column d-flex align-items-center  justify-content-center'}}) }}
+
+        <div class="my-custom-class-for-errors col-12">
+            {{ form_errors(form) }}
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
+            {{ form_label(form.url) }}
+            {{ form_widget(form.url) }}
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
+            {{ form_label(form.details) }}
+            {{ form_widget(form.details) }}
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
+            {{ form_label(form.price) }}
+            {{ form_widget(form.price) }}
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
