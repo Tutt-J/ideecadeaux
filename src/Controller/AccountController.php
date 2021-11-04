@@ -9,6 +9,7 @@ use App\Form\FamilyFormType;
 use App\Form\GiftFormType;
 use App\Form\UserFamilyFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\UrlHelper;
@@ -18,7 +19,7 @@ use Symfony\Component\Uid\Uuid;
 class AccountController extends AbstractController
 {
 
-    #[Route('/ajouter-une-famille', name: 'createFamily')]
+    #[Route('/mon-compte/ajouter-une-famille', name: 'createFamily')]
     public function createFamily(Request $request, UrlHelper $urlHelper): Response
     {
         $family = new Family();
@@ -40,7 +41,7 @@ class AccountController extends AbstractController
 
             $baseurl = $request->getScheme() . '://' . $request->getHttpHost() . $request->getBasePath();
 
-            $this->addFlash('success', 'La famille a bien été créé. Voici son lien de partage : '.$baseurl.'/'.$uuid);
+            $this->addFlash('success', 'La famille a bien été créé. Voici son lien de partage : '.$baseurl.'/rejoindre-une-famille/'.$uuid);
 
         }
 
@@ -50,7 +51,27 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/rejoindre-une-famille', name: 'joinFamily')]
+    #[Route('/rejoindre-une-famille/{id}', name: 'joinFamilyLink')]
+    public function joinFamilyLink(Request $request, $id): Response
+    {
+        $family =  $this->getDoctrine()
+            ->getRepository(Family::class)
+            ->findOneBy(["uuid" => $id]);
+
+        if(!$family){
+            $this->addFlash('error', 'Cette famille n\'existe pas');
+        } else{
+            $this->getUser()->addFamily($family);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($this->getUser());
+            $em->flush();
+            $this->addFlash('success', 'Vous faites maintenant partie de la famille '.$family->getName());
+        }
+
+        return $this->redirectToRoute('listFamiliesMembers');
+    }
+
+    #[Route('/mon-compte/rejoindre-une-famille', name: 'joinFamily')]
     public function joinFamily(Request $request, UrlHelper $urlHelper): Response
     {
         $user = $this->getUser();
@@ -81,7 +102,7 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/mes-familles', name: 'listFamiliesMembers')]
+    #[Route('/mon-compte/mes-familles', name: 'listFamiliesMembers')]
     public function listFamiliesMembers(Request $request, UrlHelper $urlHelper): Response
     {
         $currentUser = $this->getUser();
@@ -99,7 +120,7 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/demander-un-cadeau', name: 'askGift')]
+    #[Route('/mon-compte/demander-un-cadeau', name: 'askGift')]
     public function askGift(Request $request, UrlHelper $urlHelper): Response
     {
         $gift = new Gift();
@@ -124,10 +145,10 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/modifier-un-cadeau/{id}', name: 'editGift')]
+    #[Route('/mon-compte/modifier-un-cadeau/{id}', name: 'editGift')]
     public function editGift(Request $request, Gift $gift): Response
     {
-
+        //TODO: VOTER TO CHECK IF IS MINE
         $form = $this->createForm(GiftFormType::class, $gift);
 
         $form->handleRequest($request);
@@ -147,7 +168,7 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/voir-ma-liste', name: 'viewMyList')]
+    #[Route('/mon-compte/voir-ma-liste', name: 'viewMyList')]
     public function viewMyList(Request $request): Response
     {
         return $this->render('account/list_gifts.html.twig',[
@@ -155,16 +176,29 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/voir-une-liste/{id}', name: 'viewOneList')]
+    #[Route('/mon-compte/voir-une-liste/{id}', name: 'viewOneList')]
     public function viewOneList(Request $request, User $user): Response
     {
-        //check if user is on family for list
+        $hasRight = false;
+        $families  = $this->getUser()->getFamilies();
+        foreach ($families as $family){
+            foreach ($family->getUsers() as $member){
+                if($member === $user){
+                    $hasRight=true;
+                }
+            }
+        }
+
+        if(!$hasRight){
+            throw new AccessDeniedException("Vous n'avez pas le droit d'accéder à la liste de cette personne");
+        }
+
         return $this->render('account/list_gifts.html.twig',[
             'user' => $user
         ]);
     }
 
-    #[Route('/voir-une-liste/{id}/acheter-un-cadeau/{gift}', name: 'buyGift')]
+    #[Route('/mon-compte/voir-une-liste/{id}/acheter-un-cadeau/{gift}', name: 'buyGift')]
     public function buyGift(Request $request, User $user, Gift $gift): Response
     {
         $gift->setAlreadyBuy(true);
@@ -173,4 +207,6 @@ class AccountController extends AbstractController
         $em->flush();
         return $this->redirectToRoute('viewOneList', ['id' => $user->getId()]);
     }
+
+
 }
