@@ -23,25 +23,32 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('firstName', TextType::class, [
-                'label' => 'Prénom',
+                'label' => 'Prénom<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('lastName', TextType::class, [
-                'label' => 'Nom',
+                'label' => 'Nom<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('email', EmailType::class, [
-                'label' => 'Email',
+                'label' => 'Email<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('street', TextType::class, [
-                'label' => 'Numéro et nom de la rue',
+                'label' => 'Numéro et nom de la rue<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('postalCode', TextType::class, [
-                'label' => 'Code postal',
+                'label' => 'Code postal<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('city', TextType::class, [
-                'label' => 'Ville',
+                'label' => 'Ville<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('country', CountryType::class, [
-                'label' => 'Pays',
+                'label' => 'Pays<span class="text-danger"> *</span>',
+                'label_html' => true,
             ])
             ->add('plainPassword', RepeatedType::class, [
                 // instead of being set onto the object directly,
@@ -50,14 +57,16 @@ class RegistrationFormType extends AbstractType
                 'invalid_message' => 'Les deux mots de passe doivent être identiques',
                 'options' => ['attr' => ['class' => 'password-field']],
                 'required' => true,
-                'first_options'  => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Répétez le mot de passe'],
+                'first_options'  => ['label' => 'Mot de passe<span class="text-danger"> *</span>', 'label_html' => true,],
+                'second_options' => ['label' => 'Répétez le mot de passe<span class="text-danger"> *</span>', 'label_html' => true,],
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,
+                'label' => 'J\'accepte les <a href="">conditions générales de vente</a><span class="text-danger"> *</span>',
+                'label_html' => true,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'Vous devez accepter les conditions',
                     ]),
                 ],
             ])

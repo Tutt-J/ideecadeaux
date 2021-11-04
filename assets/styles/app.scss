@@ -2,9 +2,13 @@
 
 .nav-link{
   color:black;
-  font-size: 1.2em;
+  font-size: 1.4em;
+  font-weight: bold;
   &:hover{
     color:#bc6d4c;
+  }
+  &.active{
+    color:#b71a3b;
   }
 }
 
@@ -14,4 +18,18 @@
 
 main > section{
   padding-top:70px;
+}
+
+.overlay{
+  height:100vh;
+  width:100vw;
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:0;
+}
+
+.content{
+  position: relative;
+  z-index: 1000;
 }
