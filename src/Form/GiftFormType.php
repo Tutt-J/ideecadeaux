@@ -92,7 +92,6 @@ class GiftFormType extends AbstractType
                 'placeholder' => 'Choisir une liste',
                 'label' => 'Choix de la liste<span class="text-danger"> *</span>',
                 'label_html' => true,
-                'choice_label' => 'name',
                 'choice_label' => function($giftGroup) {
                     if($giftGroup->getChild()!=null){
                         $name = $giftGroup->getChild()->getFirstName().' '.$giftGroup->getChild()->getLastName();

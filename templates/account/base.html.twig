@@ -42,6 +42,13 @@
             <div class="sidebar-brand-text mx-3">Idées cadeaux</div>
         </a>
 
+        <li class="nav-item">
+            <a class="nav-link" href="{{path('viewCurrentList')}}">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Listes en cours</span>
+            </a>
+        </li>
+
         <!-- Divider -->
         <hr class="sidebar-divider">
 
@@ -51,12 +58,7 @@
         </div>
 
         <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link" href="{{path("createFamily")}}">
-                <i class="fas fa-plus"></i>
-                <span>Créer une famille</span>
-            </a>
-        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="{{path('joinFamily')}}">
                 <i class="fas fa-link"></i>
@@ -64,15 +66,15 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{{path('listChildren')}}">
-                <i class="fas fa-child"></i>
-                <span>Mes enfants</span>
-            </a>
-        </li>
-        <li class="nav-item">
             <a class="nav-link" href="{{path('listFamilies')}}">
                 <i class="fas fa-users"></i>
                 <span>Mes familles</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{path('listChildren')}}">
+                <i class="fas fa-child"></i>
+                <span>Mes enfants</span>
             </a>
         </li>
         <li class="nav-item">
@@ -87,8 +89,15 @@
 
         <!-- Heading -->
         <div class="sidebar-heading">
-            Mes cadeaux
+            Création
         </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{path("createFamily")}}">
+                <i class="fas fa-plus"></i>
+                <span>Créer une famille</span>
+            </a>
+        </li>
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
@@ -100,14 +109,30 @@
 
         <li class="nav-item">
             <a class="nav-link" href="{{path('askGift')}}">
-                <i class="fas fa-gifts"></i>
+                <i class="fas fa-plus"></i>
                 <span>Ajouter un cadeau</span>
             </a>
         </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <!-- Heading -->
+        <div class="sidebar-heading">
+            Gestion
+        </div>
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{path('viewMyGifts')}}">
+                <i class="fas fa-gifts"></i>
+                <span>Mes cadeaux</span>
+            </a>
+        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="{{path('viewAllList', {'id': app.user.id})}}">
                 <i class="fas fa-clipboard-list"></i>
-                <span>Accéder à mes listes</span>
+                <span>Mes listes</span>
             </a>
         </li>
 

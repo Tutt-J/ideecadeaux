@@ -12,8 +12,10 @@ use App\Form\FamilyFormType;
 use App\Form\GiftFormType;
 use App\Form\GiftGroupFormType;
 use App\Form\UserFamilyFormType;
+use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -258,6 +260,23 @@ class AccountController extends AbstractController
         ]);
     }
 
+    #[Route('/mon-compte/voir-mes-cadeaux/supprimer/{id}', name: 'deleteGift')]
+    public function deleteGift(Gift $gift): Response
+    {
+        if(!$gift->getGiftGroup()->isEmpty()){
+            $this->addFlash('error', 'Vous n\'avez pas le droit de supprimer un cadeau présent dans une liste. Supprimez d\'abord la liste.');
+        } else{
+            $em = $this->getDoctrine()->getManager();
+
+            $em->remove($gift);
+            $em->flush();
+
+            $this->addFlash('success', 'Le cadeau a été supprimé');
+        }
+
+        return $this->redirectToRoute("viewMyGifts");
+    }
+
     #[Route('/mon-compte/voir-une-liste/{id}/acheter-un-cadeau/{gift}', name: 'buyGift')]
     public function buyGift(User $user, Gift $gift): Response
     {
@@ -268,10 +287,41 @@ class AccountController extends AbstractController
         return $this->redirectToRoute('viewOneList', ['id' => $user->getId()]);
     }
 
+    #[Route('/mon-compte/voir-mes-cadeaux', name: 'viewMyGifts')]
+    public function viewMyGifts(): Response
+    {
+        return $this->render('account/list_my_gifts.html.twig',[
+            'user' => $this->getUser()
+        ]);
+    }
+
 
     /********************************************/
     /******************LISTS*********************/
     /******************************************/
+
+    #[Route('/mon-compte/listes-en-cours', name: 'viewCurrentList')]
+    public function viewCurrentList(): Response
+    {
+        $families = $this->getUser()->getFamilies();
+        $giftGroups = [];
+        foreach ($families as $family){
+            $members = $family->getUsers();
+            foreach ($members as $member){
+                $lists = $member->getGiftGroups();
+                foreach($lists as $list){
+                    if($list->getExpireDate() > new DateTime()){
+                        $giftGroups[$list->getId()] = $list;
+                    }
+                }
+            }
+        }
+
+
+        return $this->render('account/list_giftsGroup.html.twig',[
+            'giftGroups' => $giftGroups
+        ]);
+    }
 
     #[Route('/mon-compte/creer-une-liste', name: 'createList')]
     public function createList(Request $request){
@@ -298,6 +348,23 @@ class AccountController extends AbstractController
         ]);
     }
 
+    #[Route('/mon-compte/voir-les-listes/supprimer/{id}', name: 'deleteList')]
+    public function deleteList(GiftGroup $giftGroup): Response
+    {
+        if($giftGroup->getExpireDate() > new DateTime()){
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer une liste qui n\'est pas expirée');
+        } else{
+            $em = $this->getDoctrine()->getManager();
+
+            $em->remove($giftGroup);
+            $em->flush();
+
+            $this->addFlash('success', 'La liste a été supprimée');
+        }
+
+        return  $this->redirectToRoute('viewAllList', ['id' => $this->getUser()->getId()]);
+    }
+
     #[Route('/mon-compte/voir-les-listes/{id}', name: 'viewAllList')]
     public function viewAllList(User $user): Response
     {
@@ -316,6 +383,7 @@ class AccountController extends AbstractController
         }
 
         return $this->render('account/list_giftsGroup.html.twig',[
+            'giftGroups' => $user->getGiftGroups(),
             'user' => $user
         ]);
     }
@@ -341,6 +409,7 @@ class AccountController extends AbstractController
         }
 
         return $this->render('account/list_giftsGroup.html.twig',[
+            'giftGroups' => $child->getGiftGroups(),
             'user' => $child
         ]);
     }

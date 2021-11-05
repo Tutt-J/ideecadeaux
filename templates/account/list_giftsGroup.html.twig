@@ -3,7 +3,7 @@
 {% block body %}
     <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) de {{ user.firstName }} {{ user.lastName }}</h1>
+            <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) {% if user is defined %}de {{ user.firstName }} {{ user.lastName }} {%endif%}</h1>
         </div>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -28,21 +28,51 @@
                     </tr>
                     </tfoot>
                     <tbody>
-                    {% for list in user.giftGroups %}
-                        {% if list.child is null %}
+                    {% for list in giftGroups %}
+                        {% if list.child is null or user is not defined %}
                             <tr>
-                                <td>{{ list.name }}</td>
+                                <td>{{ list.name }}
+                                    {% if user is not defined %}
+                                        par
+                                        {% if list.child is not null %}
+                                            {{ list.child.firstName ~" "~list.child.lastName }}
+                                        {% else %}
+                                            {{ list.askBy.firstName ~" "~list.askBy.lastName }}
+                                        {% endif %}
+                                    {% endif %}</td>
                                 <td >{{ list.expireDate |date('d/m/Y') }}</td>
                                 <td>
                                     <a href="{{ path('viewOneList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                    <button
+                                            class="btn btn-link"
+                                            data-bs-body="{{ "Voulez-vous supprimer la liste " ~ list.name }}"
+                                            data-bs-button="Supprimer"
+                                            data-bs-url="{{ path("deleteList", {'id' : list.id}) }}"
+                                            data-bs-title="{{ "Supprimer une liste" }}"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal"
+                                            title="Supprimer la liste">
+                                        <i class="fas fa-trash-alt text-danger"></i>
+                                    </button>
                                 </td>
                             </tr>
-                         {% elseif list.child == user%}
+                         {% elseif user is defined and list.child == user%}
                              <tr>
                                  <td>{{ list.name }}</td>
                                  <td >{{ list.expireDate |date('d/m/Y') }}</td>
                                  <td>
                                      <a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                     <button
+                                             class="btn btn-link"
+                                             data-bs-body="{{ "Voulez-vous supprimer la liste " ~ list.name }}"
+                                             data-bs-button="Supprimer"
+                                             data-bs-url="{{ path("deleteList", {'id' : list.id}) }}"
+                                             data-bs-title="{{ "Supprimer une liste" }}"
+                                             data-bs-toggle="modal"
+                                             data-bs-target="#deleteModal"
+                                             title="Supprimer la liste">
+                                         <i class="fas fa-trash-alt text-danger"></i>
+                                     </button>
                                  </td>
                              </tr>
                         {% endif %}
@@ -52,5 +82,7 @@
             </div>
         </div>
     </div>
+    {% include "account/_modal.html.twig" %}
+
 
 {% endblock %}
