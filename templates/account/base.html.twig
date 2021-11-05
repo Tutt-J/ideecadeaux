@@ -64,9 +64,21 @@
             </a>
         </li>
         <li class="nav-item">
+            <a class="nav-link" href="{{path('listChildren')}}">
+                <i class="fas fa-child"></i>
+                <span>Mes enfants</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{path('listFamilies')}}">
+                <i class="fas fa-users"></i>
+                <span>Mes familles</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="{{path('listFamiliesMembers')}}">
                 <i class="fas fa-users"></i>
-                <span>Les membres de mes familles</span>
+                <span>Membres de mes familles</span>
             </a>
         </li>
 
@@ -80,16 +92,22 @@
 
         <!-- Nav Item - Pages Collapse Menu -->
         <li class="nav-item">
-            <a class="nav-link" href="{{path('askGift')}}">
+            <a class="nav-link" href="{{path('createList')}}">
                 <i class="fas fa-plus"></i>
-                <span>Demander un cadeau</span>
+                <span>Créer une liste</span>
             </a>
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{path('viewMyList')}}">
+            <a class="nav-link" href="{{path('askGift')}}">
+                <i class="fas fa-gifts"></i>
+                <span>Ajouter un cadeau</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{path('viewAllList', {'id': app.user.id})}}">
                 <i class="fas fa-clipboard-list"></i>
-                <span>Accéder à ma liste</span>
+                <span>Accéder à mes listes</span>
             </a>
         </li>
 
@@ -116,6 +134,16 @@
                 <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                     <i class="fa fa-bars"></i>
                 </button>
+                <!-- Topbar Navbar -->
+                <ul class="navbar-nav ml-auto">
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item dropdown no-arrow">
+                        <p id="userDropdown">
+                            <span class="mr-2 text-dark font-weight-bold">Bonjour {{ app.user.firstName }}</span>
+                        </p>
+                    </li>
+
+                </ul>
             </nav>
             <!-- End of Topbar -->
             <!-- Begin Page Content -->
@@ -178,7 +206,6 @@
 
 <!-- Custom scripts for all pages-->
 <script src="{{  asset('sb_admin/js/sb-admin-2.min.js') }}"></script>
-
 
 </body>
 

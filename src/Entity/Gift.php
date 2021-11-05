@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\GiftRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,11 +34,6 @@ class Gift
      */
     private $details;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gifts")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $ask_by;
 
     /**
      * @ORM\Column(type="boolean")
@@ -47,6 +44,16 @@ class Gift
      * @ORM\Column(type="float")
      */
     private $price;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=GiftGroup::class, inversedBy="gifts")
+     */
+    private $giftGroup;
+
+    public function __construct()
+    {
+        $this->giftGroup = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -89,18 +96,6 @@ class Gift
         return $this;
     }
 
-    public function getAskBy(): ?User
-    {
-        return $this->ask_by;
-    }
-
-    public function setAskBy(?User $ask_by): self
-    {
-        $this->ask_by = $ask_by;
-
-        return $this;
-    }
-
     public function getAlreadyBuy(): ?bool
     {
         return $this->already_buy;
@@ -121,6 +116,30 @@ class Gift
     public function setPrice(float $price): self
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GiftGroup[]
+     */
+    public function getGiftGroup(): Collection
+    {
+        return $this->giftGroup;
+    }
+
+    public function addGiftGroup(GiftGroup $giftGroup): self
+    {
+        if (!$this->giftGroup->contains($giftGroup)) {
+            $this->giftGroup[] = $giftGroup;
+        }
+
+        return $this;
+    }
+
+    public function removeGiftGroup(GiftGroup $giftGroup): self
+    {
+        $this->giftGroup->removeElement($giftGroup);
 
         return $this;
     }

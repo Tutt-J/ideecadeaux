@@ -80,10 +80,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $gifts;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Child::class, mappedBy="parent", orphanRemoval=true)
+     */
+    private $children;
+
+    /**
+     * @ORM\OneToMany(targetEntity=GiftGroup::class, mappedBy="askBy", orphanRemoval=true)
+     */
+    private $giftGroups;
+
     public function __construct()
     {
         $this->families = new ArrayCollection();
         $this->gifts = new ArrayCollection();
+        $this->children = new ArrayCollection();
+        $this->giftGroups = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -295,6 +307,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($gift->getAskBy() === $this) {
                 $gift->setAskBy(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Child[]
+     */
+    public function getChildren(): Collection
+    {
+        return $this->children;
+    }
+
+    public function addChild(Child $child): self
+    {
+        if (!$this->children->contains($child)) {
+            $this->children[] = $child;
+            $child->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChild(Child $child): self
+    {
+        if ($this->children->removeElement($child)) {
+            // set the owning side to null (unless already changed)
+            if ($child->getParent() === $this) {
+                $child->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GiftGroup[]
+     */
+    public function getGiftGroups(): Collection
+    {
+        return $this->giftGroups;
+    }
+
+    public function addGiftGroup(GiftGroup $giftGroup): self
+    {
+        if (!$this->giftGroups->contains($giftGroup)) {
+            $this->giftGroups[] = $giftGroup;
+            $giftGroup->setAskBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGiftGroup(GiftGroup $giftGroup): self
+    {
+        if ($this->giftGroups->removeElement($giftGroup)) {
+            // set the owning side to null (unless already changed)
+            if ($giftGroup->getAskBy() === $this) {
+                $giftGroup->setAskBy(null);
             }
         }
 

@@ -1,0 +1,31 @@
+{% extends "account/base.html.twig" %}
+
+{% block body %}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-2 text-gray-800">Mes familles</h1>
+    </div>
+    <div class="text-dark">
+        <ul>
+            {% for family in app.user.families %}
+                <li><h2 class="h5 font-weight-bold">{{ family.name }}</h2>
+                    <ul>
+                        <li>
+                            Lien de partage : <a href="" id="fullLink">{{ app.request.getSchemeAndHttpHost() ~"/rejoindre-une-famille/"~family.uuid }}</a>
+                            <button class="btn text-" onclick="copyToClipboard('#fullLink')" title="Copier dans le presse papier">
+                                <i class="fas fa-copy color-orange"></i>
+                            </button>
+                        </li>
+                        <li>
+                            Identifiant :
+                            <span id="uuid">{{family.uuid}}</span>
+                            <button class="btn" onclick="copyToClipboard('#uuid')" title="Copier dans le presse papier">
+                                <i class="fas fa-copy color-orange"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

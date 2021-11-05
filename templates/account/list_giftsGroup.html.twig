@@ -1,0 +1,56 @@
+{% extends "account/base.html.twig" %}
+
+{% block body %}
+    <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) de {{ user.firstName }} {{ user.lastName }}</h1>
+        </div>
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Liste</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Date d'expiration</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Date d'expiration</th>
+                        <th>Actions</th>
+                    </tr>
+                    </tfoot>
+                    <tbody>
+                    {% for list in user.giftGroups %}
+                        {% if list.child is null %}
+                            <tr>
+                                <td>{{ list.name }}</td>
+                                <td >{{ list.expireDate |date('d/m/Y') }}</td>
+                                <td>
+                                    <a href="{{ path('viewOneList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                </td>
+                            </tr>
+                         {% elseif list.child == user%}
+                             <tr>
+                                 <td>{{ list.name }}</td>
+                                 <td >{{ list.expireDate |date('d/m/Y') }}</td>
+                                 <td>
+                                     <a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                 </td>
+                             </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
