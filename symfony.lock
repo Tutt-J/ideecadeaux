@@ -162,6 +162,12 @@
     "psr/log": {
         "version": "2.0.0"
     },
+    "rollerworks/password-strength-bundle": {
+        "version": "v2.2.2"
+    },
+    "rollerworks/password-strength-validator": {
+        "version": "v1.7.0"
+    },
     "sebastian/cli-parser": {
         "version": "1.0.1"
     },

@@ -28,7 +28,7 @@ class Gift
     private $url;
 
     /**
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      */
     private $details;
 

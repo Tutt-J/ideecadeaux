@@ -24,6 +24,7 @@ security:
                 # "login" is the name of the route created previously
                 login_path: login
                 check_path: login
+                default_target_path: account
             logout:
                 path: app_logout
 
@@ -37,5 +38,4 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/mon-compte, roles: ROLE_USER, requires_channel: https }
-        - { path: ^/rejoindre-une-famille, roles: ROLE_USER, requires_channel: https }
         - { path: '^/', roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }

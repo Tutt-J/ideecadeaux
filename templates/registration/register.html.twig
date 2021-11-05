@@ -8,49 +8,61 @@
             <div class="row flex-column justify-content-center text-center d-flex">
                 <h1 class="display-2">Inscription</h1>
                 <p class="my-4"><em >Vous pourrez ensuite rejoindre ou créer une famille</em></p>
-                {{ form_start(registrationForm, {'attr': {'class': 'flex-column d-flex align-items-center  justify-content-center'}}) }}
+                {{ form_start(registrationForm, {'attr': {'class': 'flex-column d-flex align-items-center  justify-content-center', 'novalidate': 'novalidate'}}) }}
                 <div class="my-custom-class-for-errors col-12">
                     {{ form_errors(registrationForm) }}
                 </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.firstName) }}
                         {{ form_widget(registrationForm.firstName) }}
+                        {{ form_errors(registrationForm.firstName) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.lastName) }}
                         {{ form_widget(registrationForm.lastName) }}
+                        {{ form_errors(registrationForm.lastName) }}
                     </div>
                     <div class="col-12 col-md-6  col-lg-5">
                         {{ form_label(registrationForm.email) }}
                         {{ form_widget(registrationForm.email) }}
+                        {{ form_errors(registrationForm.email) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.street) }}
                         {{ form_widget(registrationForm.street) }}
+                        {{ form_errors(registrationForm.street) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.postalCode) }}
                         {{ form_widget(registrationForm.postalCode) }}
+                        {{ form_errors(registrationForm.postalCode) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.city) }}
                         {{ form_widget(registrationForm.city) }}
+                        {{ form_errors(registrationForm.city) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.country) }}
                         {{ form_widget(registrationForm.country) }}
+                        {{ form_errors(registrationForm.country) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.plainPassword.first) }}
                         {{ form_widget(registrationForm.plainPassword.first) }}
+                        {{ form_help(registrationForm.plainPassword.first) }}
+                        {{ form_errors(registrationForm.plainPassword.first) }}
                     </div>
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.plainPassword.second) }}
                         {{ form_widget(registrationForm.plainPassword.second) }}
+                        {{ form_errors(registrationForm.plainPassword.second) }}
                     </div>
+
                     <div class="col-12 col-md-6 col-lg-5 mb-3">
                         {{ form_label(registrationForm.agreeTerms) }}
                         {{ form_widget(registrationForm.agreeTerms) }}
+                        {{ form_errors(registrationForm.agreeTerms) }}
                     </div>
                 {{ form_end(registrationForm) }}
             </div>

@@ -10,6 +10,7 @@
 
 import './styles/sb_admin/sb-admin-2.scss';
 import './styles/admin.scss';
+import './js/account';
 
 
 

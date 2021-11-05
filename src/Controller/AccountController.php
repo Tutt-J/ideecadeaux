@@ -12,12 +12,47 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpFoundation\UrlHelper;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
 
 class AccountController extends AbstractController
 {
+
+    #[Route('/mon-compte', name: 'account')]
+    public function account(Request $request, SessionInterface $session): Response
+    {
+        if($session->get("familyId")){
+            return $this->redirectToRoute("joinFamilyLink", ['id' => $session->get("familyId")]);
+        };
+        return $this->redirectToRoute("listFamiliesMembers");
+    }
+
+    #[Route('/rejoindre-une-famille/{id}', name: 'joinFamilyLink')]
+    public function joinFamilyLink(Request $request, SessionInterface $session, $id): Response
+    {
+        if(is_null($this->getUser())){
+            $session->set("familyId", $id);
+            return $this->redirectToRoute("login");
+        }
+
+        $family =  $this->getDoctrine()
+            ->getRepository(Family::class)
+            ->findOneBy(["uuid" => $id]);
+
+        if(!$family){
+            $this->addFlash('error', 'Cette famille n\'existe pas');
+        } else{
+            $this->getUser()->addFamily($family);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($this->getUser());
+            $em->flush();
+            $this->addFlash('success', 'Vous faites maintenant partie de la famille '.$family->getName());
+        }
+        $session->remove("familyId");
+        return $this->redirectToRoute('listFamiliesMembers');
+    }
 
     #[Route('/mon-compte/ajouter-une-famille', name: 'createFamily')]
     public function createFamily(Request $request, UrlHelper $urlHelper): Response
@@ -51,25 +86,7 @@ class AccountController extends AbstractController
         ]);
     }
 
-    #[Route('/rejoindre-une-famille/{id}', name: 'joinFamilyLink')]
-    public function joinFamilyLink(Request $request, $id): Response
-    {
-        $family =  $this->getDoctrine()
-            ->getRepository(Family::class)
-            ->findOneBy(["uuid" => $id]);
 
-        if(!$family){
-            $this->addFlash('error', 'Cette famille n\'existe pas');
-        } else{
-            $this->getUser()->addFamily($family);
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($this->getUser());
-            $em->flush();
-            $this->addFlash('success', 'Vous faites maintenant partie de la famille '.$family->getName());
-        }
-
-        return $this->redirectToRoute('listFamiliesMembers');
-    }
 
     #[Route('/mon-compte/rejoindre-une-famille', name: 'joinFamily')]
     public function joinFamily(Request $request, UrlHelper $urlHelper): Response
@@ -137,6 +154,7 @@ class AccountController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Le cadeau a été ajouté à votre liste');
+           return  $this->redirectToRoute('viewMyList');
         }
 
 

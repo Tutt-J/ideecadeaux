@@ -15,28 +15,25 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                     <tr>
-                        <th>Nom</th>
-                        <th>Lien</th>
-                        <th>Details</th>
+                        <th>Produit</th>
+                        <th >Details</th>
                         <th>Prix</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
-                        <th>Nom</th>
-                        <th>Lien</th>
+                        <th>Produit</th>
                         <th>Details</th>
-                        <th>Prix</th>
+                        <th >Prix</th>
                         <th>Actions</th>
                     </tr>
                     </tfoot>
                     <tbody>
                     {% for gift in user.gifts %}
                         <tr>
-                            <td>{{ gift.name }}</td>
-                            <td><a href="{{ gift.url }}">{{ gift.url }}</a></td>
-                            <td>{{ gift.details }}</td>
+                            <td><a href="{{ gift.url }}">{{ gift.name }}</a></td>
+                            <td >{{ gift.details }}</td>
                             <td>{{ gift.price }}€</td>
                             <td>
                             {% if user != app.user %}
@@ -46,7 +43,7 @@
                                         <a href="{{ path('buyGift', {'id' : user.id, 'gift': gift.id}) }}" title="Réserver">Je l'ai acheté</a>
                                     {% endif %}
                              {% else %}
-                                 <a href="{{ path('editGift', {'id' : gift.id}) }}" title="Editer">Editer</a>
+                                 <a href="{{ path('editGift', {'id' : gift.id}) }}" title="Editer"><i class="fas fa-pen"></i></a>
                             {% endif %}
                             </td>
 

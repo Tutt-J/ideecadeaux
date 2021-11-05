@@ -3,12 +3,36 @@
 {% block body %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-2 text-gray-800">Les membres de mes familles</h1>
+        <h1 class="h3 mb-2 text-gray-800">Mes familles</h1>
+    </div>
+    <div class="text-dark">
+        <h2>Mes familles</h2>
+        <ul>
+            {% for family in app.user.families %}
+                <li>{{ family.name }}
+                    <ul>
+                        <li>
+                            Lien de partage : <a href="" id="fullLink">{{ app.request.getSchemeAndHttpHost() ~"/rejoindre-une-famille/"~family.uuid }}</a>
+                            <button class="btn text-" onclick="copyToClipboard('#fullLink')" title="Copier dans le presse papier">
+                                <i class="fas fa-copy color-orange"></i>
+                            </button>
+                        </li>
+                        <li>
+                            Identifiant :
+                            <span id="uuid">{{family.uuid}}</span>
+                            <button class="btn" onclick="copyToClipboard('#uuid')" title="Copier dans le presse papier">
+                                <i class="fas fa-copy color-orange"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Liste</h6>
+            <h2 class="m-0 font-weight-bold text-primary">Membres de mes familles</h2>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -17,8 +41,8 @@
                     <tr>
                         <th>Nom</th>
                         <th>Prenom</th>
-                        <th>Email</th>
-                        <th>Adresse</th>
+                        <th class="d-none d-lg-table-cell">Email</th>
+                        <th class="d-none d-lg-table-cell">Adresse</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -26,8 +50,8 @@
                     <tr>
                         <th>Nom</th>
                         <th>Prenom</th>
-                        <th>Email</th>
-                        <th>Adresse</th>
+                        <th class="d-none d-lg-table-cell">Email</th>
+                        <th class="d-none d-lg-table-cell">Adresse</th>
                         <th>Actions</th>
                     </tr>
                     </tfoot>
@@ -36,8 +60,8 @@
                         <tr>
                             <td>{{ member.lastName }}</td>
                             <td>{{ member.firstName }}</td>
-                            <td>{{ member.email }}</td>
-                            <td>{{ member.street }} {{ member.postalCode }} {{ member.city }} {{ member.country }}</td>
+                            <td class="d-none d-lg-table-cell">{{ member.email }}</td>
+                            <td class="d-none d-lg-table-cell">{{ member.street }} {{ member.postalCode }} {{ member.city }} {{ member.country }}</td>
                             <td>
                                 <a href="{{ path('viewOneList', {'id': member.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-gift"></i></a>
                             </td>
