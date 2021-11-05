@@ -238,17 +238,28 @@ class AccountController extends AbstractController
     }
 
     #[Route('/mon-compte/modifier-un-cadeau/{id}', name: 'editGift')]
-    public function editGift(Request $request, Gift $gift): Response
+    public function editGift(Request $request, Gift $gift, SessionInterface $session): Response
     {
         //TODO: VOTER TO CHECK IF IS MINE
         $form = $this->createForm(GiftFormType::class, $gift);
 
+//        if(!$session->get('giftCopie')){
+//            $session->set('giftCopie', clone $gift);
+//        }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $em = $this->getDoctrine()->getManager();
+//            foreach ($session->get('giftCopie')->getGiftGroup() as $group){
+//                $gift->addGiftGroup($group);
+//            }
             $em->persist($gift);
             $em->flush();
+
+            $session->remove('giftCopie');
+
 
             $this->addFlash('success', 'Le cadeau a été modifié');
             return $this->redirectToRoute("viewAllList", ['id'=> $this->getUser()->getId()]);

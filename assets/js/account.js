@@ -10,6 +10,16 @@ require('bootstrap');
 $(document).ready(function() {
     $('[data-toggle="popover"]').popover();
 
+
+    /**************************************
+     * CANNOT UNCHECK
+     *************************************/
+
+    $('#gift_form_giftGroup input').each((index, currentElement) => {
+        if(currentElement.checked){
+            currentElement.disabled = true;
+        }
+    })
 });
 
 /*****************************************
@@ -56,4 +66,5 @@ if(deleteModal){
     })
 
 }
+
 
