@@ -27,7 +27,7 @@
                         </li>
                         {% if is_granted('ROLE_USER') %}
                             <li class="nav-item">
-                                <a class="nav-link {% if app.request.attributes.get('_route') == 'listFamiliesMembers' %}active{% endif %}" aria-current="page" href="{{ path('listFamiliesMembers') }}">Mon compte</a>
+                                <a class="nav-link {% if app.request.attributes.get('_route') == 'listFamiliesMembers' %}active{% endif %}" aria-current="page" href="{{ path('viewCurrentList') }}">Mon compte</a>
                             </li>
                         {% else %}
                             <li class="nav-item">

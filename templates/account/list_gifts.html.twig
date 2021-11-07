@@ -2,8 +2,15 @@
 
 {% block body %}
     <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-2 text-gray-800">{{ gifts_group.name }} - {{ user.firstName }} {{ user.lastName }}</h1>
+        <div class="d-sm-flex flex-wrap align-items-center justify-content-between mb-4">
+            {% if gifts_group is not defined %}
+                <h1 class="h3 mb-2 text-gray-800">Mes cadeaux</h1>
+                <a href="{{path('askGift')}}" class="btn btn-primary"><i class="fas fa-plus pr-3"></i>Ajouter un cadeau</a>
+            {% else %}
+                <h1 class="col-12 h3 mb-2 text-gray-800">{{ gifts_group.name }} - {{ user.firstName }} {{ user.lastName }}</h1>
+                <p class="col-12 h4"><em>Au besoin, envoyer à : {{ user.street }} {{ user.postalCode }} {{ user.city }} {{ user.country }}</em></p>
+            {% endif %}
+
         </div>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -16,8 +23,9 @@
                     <thead>
                     <tr>
                         <th>Produit</th>
-                        <th >Details</th>
+                        <th>Details</th>
                         <th>Prix</th>
+                        <th>Listes</th>
                         <th>Actions</th>
                     </tr>
                     </thead>
@@ -25,16 +33,34 @@
                     <tr>
                         <th>Produit</th>
                         <th>Details</th>
-                        <th >Prix</th>
+                        <th>Prix</th>
+                        <th>Listes</th>
                         <th>Actions</th>
                     </tr>
                     </tfoot>
                     <tbody>
-                    {% for gift in gifts_group.gifts %}
+                    {% if gifts_group is not defined %}
+                        {% set gifts = user.gifts %}
+                    {% else %}
+                        {% set gifts = gifts_group.gifts %}
+                    {% endif %}
+                    {% for gift in gifts %}
                         <tr>
-                            <td><a href="{{ gift.url }}">{{ gift.name }}</a></td>
+                            <td>
+                                {% if gift.child is not null and gift.child != user %}
+                                    <strong class="text-dark">{{ gift.child.firstName ~" "~ gift.child.lastName}} - </strong>
+                                {% endif %}
+                                <a href="{{ gift.url }}">{{ gift.name }}</a></td>
                             <td >{{ gift.details }}</td>
                             <td>{{ gift.price }}€</td>
+                            <td>
+                                <ul>
+                                    {% for list in gift.giftGroup %}
+                                        <li>{{ list.name }}</li>
+                                    {% endfor %}
+                                </ul>
+
+                            </td>
                             <td>
                             {% if user != app.user %}
                                     {% if gift.alreadyBuy == 1 %}
@@ -44,6 +70,17 @@
                                     {% endif %}
                              {% else %}
                                  <a href="{{ path('editGift', {'id' : gift.id}) }}" title="Editer"><i class="fas fa-pen"></i></a>
+                                 <button
+                                         class="btn btn-link"
+                                         data-bs-body="{{ "Voulez-vous supprimer le cadeau " ~ gift.name }}"
+                                         data-bs-button="Supprimer"
+                                         data-bs-url="{{ path("deleteGift", {'id' : gift.id}) }}"
+                                         data-bs-title="{{ "Supprimer un cadeau" }}"
+                                         data-bs-toggle="modal"
+                                         data-bs-target="#deleteModal"
+                                         title="Supprimer le cadeau">
+                                     <i class="fas fa-trash-alt text-danger"></i>
+                                 </button>
                             {% endif %}
                             </td>
 
@@ -54,5 +91,5 @@
             </div>
         </div>
     </div>
-
+    {% include "account/_modal.html.twig" %}
 {% endblock %}

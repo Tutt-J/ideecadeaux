@@ -15,6 +15,8 @@
     <link
             href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
             rel="stylesheet">
+    <link href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css">
+
 
     <!-- Custom styles for this template-->
     {% block stylesheets %}
@@ -35,12 +37,12 @@
     <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled" id="accordionSidebar">
 
         <!-- Sidebar - Brand -->
-        <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
             <div class="sidebar-brand-icon rotate-n-15">
                 <i class="fas fa-gifts"></i>
             </div>
             <div class="sidebar-brand-text mx-3">Idées cadeaux</div>
-        </a>
+        </div>
 
         <li class="nav-item">
             <a class="nav-link" href="{{path('viewCurrentList')}}">
@@ -77,42 +79,7 @@
                 <span>Mes enfants</span>
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link" href="{{path('listFamiliesMembers')}}">
-                <i class="fas fa-users"></i>
-                <span>Membres de mes familles</span>
-            </a>
-        </li>
 
-        <!-- Divider -->
-        <hr class="sidebar-divider">
-
-        <!-- Heading -->
-        <div class="sidebar-heading">
-            Création
-        </div>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{{path("createFamily")}}">
-                <i class="fas fa-plus"></i>
-                <span>Créer une famille</span>
-            </a>
-        </li>
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-            <a class="nav-link" href="{{path('createList')}}">
-                <i class="fas fa-plus"></i>
-                <span>Créer une liste</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a class="nav-link" href="{{path('askGift')}}">
-                <i class="fas fa-plus"></i>
-                <span>Ajouter un cadeau</span>
-            </a>
-        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -133,6 +100,16 @@
             <a class="nav-link" href="{{path('viewAllList', {'id': app.user.id})}}">
                 <i class="fas fa-clipboard-list"></i>
                 <span>Mes listes</span>
+            </a>
+        </li>
+
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+
+        <li class="nav-item">
+            <a class="nav-link" href="{{path('listFamiliesMembers')}}">
+                <i class="fas fa-map-marker"></i>
+                <span>Adresses</span>
             </a>
         </li>
 
@@ -163,7 +140,7 @@
                 <ul class="navbar-nav ml-auto">
                     <!-- Nav Item - User Information -->
                     <li class="nav-item dropdown no-arrow">
-                        <p id="userDropdown">
+                        <p id="userDropdown" class="mb-0">
                             <span class="mr-2 text-dark font-weight-bold">Bonjour {{ app.user.firstName }}</span>
                         </p>
                     </li>
@@ -228,6 +205,8 @@
 
 <!-- Core plugin JavaScript-->
 <script src="{{ asset('sb_admin/vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+<script src="{{ asset('//cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('//cdn.datatables.net/plug-ins/1.11.3/i18n/fr_fr.json') }}"></script>
 
 <!-- Custom scripts for all pages-->
 <script src="{{  asset('sb_admin/js/sb-admin-2.min.js') }}"></script>

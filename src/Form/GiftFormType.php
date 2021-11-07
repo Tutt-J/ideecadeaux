@@ -90,7 +90,7 @@ class GiftFormType extends AbstractType
                         ;
                 },
                 'placeholder' => 'Choisir une liste',
-                'label' => 'Choix de la liste<span class="text-danger"> *</span>',
+                'label' => 'Choix des listes<span class="text-danger"> *</span>',
                 'label_html' => true,
                 'choice_label' => function($giftGroup) {
                     if($giftGroup->getChild()!=null){
@@ -104,6 +104,22 @@ class GiftFormType extends AbstractType
                 'required' => true,
                 'multiple'=>true,
                 'expanded'=>true,
+                'help' => "Attention, une fois ajouté à la liste, le cadeau ne pourra en être supprimé. Il faudra attendre l'expiration de la liste."
+            ])
+            ->add('child', EntityType::class, [
+                'class' => Child::class,
+                'query_builder' => function (ChildRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->where('u.parent = :id')
+                        ->setParameter('id', $this->security->getUser()->getId())
+                        ;
+                },
+                'placeholder' => 'Choisir un enfant',
+                'label' => 'Choix de l\'enfant, le cas échéant',
+                'label_html' => true,
+                'choice_label' => 'firstName',
+                'required' => false,
+                'attr' => ['class' => 'form-control']
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Envoyer',

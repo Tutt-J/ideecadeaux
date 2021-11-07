@@ -30,25 +30,26 @@ class Child
     private $lastName;
 
     /**
- * @ORM\ManyToOne(targetEntity=User::class, inversedBy="children")
- * @ORM\JoinColumn(nullable=false)
- */
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="children")
+     * @ORM\JoinColumn(nullable=false)
+     */
     private $parent;
 
-    /**
-     * @ORM\OneToMany(targetEntity=Gift::class, mappedBy="child")
-     */
-    private $gifts;
 
     /**
-     * @ORM\OneToMany(targetEntity=GiftGroup::class, mappedBy="child")
+     * @ORM\OneToMany(targetEntity=GiftGroup::class, mappedBy="child", orphanRemoval=true)
      */
     private $giftGroups;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Gift::class, mappedBy="child", orphanRemoval=true)
+     */
+    private $gifts;
+
     public function __construct()
     {
-        $this->gifts = new ArrayCollection();
         $this->giftGroups = new ArrayCollection();
+        $this->gifts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -92,35 +93,6 @@ class Child
         return $this;
     }
 
-    /**
-     * @return Collection|Gift[]
-     */
-    public function getGifts(): Collection
-    {
-        return $this->gifts;
-    }
-
-    public function addGift(Gift $gift): self
-    {
-        if (!$this->gifts->contains($gift)) {
-            $this->gifts[] = $gift;
-            $gift->setChild($this);
-        }
-
-        return $this;
-    }
-
-    public function removeGift(Gift $gift): self
-    {
-        if ($this->gifts->removeElement($gift)) {
-            // set the owning side to null (unless already changed)
-            if ($gift->getChild() === $this) {
-                $gift->setChild(null);
-            }
-        }
-
-        return $this;
-    }
 
     /**
      * @return Collection|GiftGroup[]
@@ -146,6 +118,36 @@ class Child
             // set the owning side to null (unless already changed)
             if ($giftGroup->getChild() === $this) {
                 $giftGroup->setChild(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Gift[]
+     */
+    public function getGifts(): Collection
+    {
+        return $this->gifts;
+    }
+
+    public function addGift(Gift $gift): self
+    {
+        if (!$this->gifts->contains($gift)) {
+            $this->gifts[] = $gift;
+            $gift->setChild($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGift(Gift $gift): self
+    {
+        if ($this->gifts->removeElement($gift)) {
+            // set the owning side to null (unless already changed)
+            if ($gift->getChild() === $this) {
+                $gift->setChild(null);
             }
         }
 

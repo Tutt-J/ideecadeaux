@@ -38,7 +38,14 @@
         <div class="col-12 col-md-6 col-lg-5 mb-3">
             {{ form_label(form.giftGroup) }}
             {{ form_widget(form.giftGroup) }}
-            {{ form_errors(form.giftGroup) }}
+            {{ form_errors(form.giftGroup)}}
+            <small>{{ form_help(form.giftGroup) }}</small>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-5 mb-3">
+            {{ form_label(form.child) }}
+            {{ form_widget(form.child) }}
+            {{ form_errors(form.child) }}
         </div>
 
         {{ form_end(form) }}

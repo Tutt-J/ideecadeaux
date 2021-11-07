@@ -35,7 +35,7 @@ class AccountController extends AbstractController
         if($session->get("familyId")){
             return $this->redirectToRoute("joinFamilyLink", ['id' => $session->get("familyId")]);
         };
-        return $this->redirectToRoute("listFamiliesMembers");
+        return $this->redirectToRoute("viewCurrentList");
     }
 
     #[Route('/rejoindre-une-famille/{id}', name: 'joinFamilyLink')]
@@ -220,15 +220,14 @@ class AccountController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-
-//            $this->getUser()->addGift($gift);
+            $gift->setUser($this->getUser());
             $gift->setAlreadyBuy(false);
             $em->persist($gift);
             $em->persist($this->getUser());
             $em->flush();
 
             $this->addFlash('success', 'Le cadeau a été ajouté à votre liste');
-            return $this->redirectToRoute("viewAllList", ['id'=> $this->getUser()->getId()]);
+            return $this->redirectToRoute("viewMyGifts");
         }
 
 
@@ -240,7 +239,8 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/modifier-un-cadeau/{id}', name: 'editGift')]
     public function editGift(Request $request, Gift $gift, SessionInterface $session): Response
     {
-        //TODO: VOTER TO CHECK IF IS MINE
+        $this->denyAccessUnlessGranted('EDIT', $gift);
+
         $form = $this->createForm(GiftFormType::class, $gift);
 
 //        if(!$session->get('giftCopie')){
@@ -253,7 +253,10 @@ class AccountController extends AbstractController
 
             $em = $this->getDoctrine()->getManager();
 //            foreach ($session->get('giftCopie')->getGiftGroup() as $group){
+////                $em->persist($group);
+//
 //                $gift->addGiftGroup($group);
+//
 //            }
             $em->persist($gift);
             $em->flush();
@@ -262,7 +265,7 @@ class AccountController extends AbstractController
 
 
             $this->addFlash('success', 'Le cadeau a été modifié');
-            return $this->redirectToRoute("viewAllList", ['id'=> $this->getUser()->getId()]);
+            return $this->redirectToRoute("viewMyGifts");
         }
 
 
@@ -301,7 +304,7 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-mes-cadeaux', name: 'viewMyGifts')]
     public function viewMyGifts(): Response
     {
-        return $this->render('account/list_my_gifts.html.twig',[
+        return $this->render('account/list_gifts.html.twig',[
             'user' => $this->getUser()
         ]);
     }
@@ -348,8 +351,11 @@ class AccountController extends AbstractController
 
             $em->persist($this->getUser());
             $em->flush();
+            $this->addFlash('success', 'La liste a été créée');
 
-            $this->addFlash('success', 'La liste a été crée');
+            if($form->getData()->getChild() != null){
+                return  $this->redirectToRoute('viewChildAllList', ['id' => $form->getData()->getChild()->getId()]);
+            }
             return  $this->redirectToRoute('viewAllList', ['id' => $this->getUser()->getId()]);
         }
 
@@ -379,19 +385,7 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-les-listes/{id}', name: 'viewAllList')]
     public function viewAllList(User $user): Response
     {
-        $hasRight = false;
-        $families  = $this->getUser()->getFamilies();
-        foreach ($families as $family){
-            foreach ($family->getUsers() as $member){
-                if($member === $user){
-                    $hasRight=true;
-                }
-            }
-        }
-
-        if(!$hasRight){
-            throw new AccessDeniedException("Vous n'avez pas le droit d'accéder aux listes de cette personne");
-        }
+        $this->denyAccessUnlessGranted('LIST', $user);
 
         return $this->render('account/list_giftsGroup.html.twig',[
             'giftGroups' => $user->getGiftGroups(),
@@ -403,21 +397,8 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-les-listes/enfant/{id}', name: 'viewChildAllList')]
     public function viewChildAllList(Child $child): Response
     {
-        $hasRight = false;
-        $families  = $this->getUser()->getFamilies();
-
         $user = $child->getParent();
-        foreach ($families as $family){
-            foreach ($family->getUsers() as $member){
-                if($member === $user){
-                    $hasRight=true;
-                }
-            }
-        }
-
-        if(!$hasRight){
-            throw new AccessDeniedException("Vous n'avez pas le droit d'accéder à la liste de cette personne");
-        }
+        $this->denyAccessUnlessGranted('LIST', $user);
 
         return $this->render('account/list_giftsGroup.html.twig',[
             'giftGroups' => $child->getGiftGroups(),
@@ -430,19 +411,7 @@ class AccountController extends AbstractController
     {
         $user = $giftGroup->getAskBy();
 
-        $hasRight = false;
-        $families  = $this->getUser()->getFamilies();
-        foreach ($families as $family){
-            foreach ($family->getUsers() as $member){
-                if($member === $user){
-                    $hasRight=true;
-                }
-            }
-        }
-
-        if(!$hasRight){
-            throw new AccessDeniedException("Vous n'avez pas le droit d'accéder à la liste de cette personne");
-        }
+        $this->denyAccessUnlessGranted('LIST', $user);
 
         return $this->render('account/list_gifts.html.twig',[
             'user' => $user,
@@ -453,23 +422,10 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-une-liste/enfant/{id}', name: 'viewChildList')]
     public function viewChildList(GiftGroup $giftGroup): Response
     {
-
         $child = $giftGroup->getChild();
-        $hasRight = false;
-        $families  = $this->getUser()->getFamilies();
-
         $user = $child->getParent();
-        foreach ($families as $family){
-            foreach ($family->getUsers() as $member){
-                if($member === $user){
-                    $hasRight=true;
-                }
-            }
-        }
+        $this->denyAccessUnlessGranted('LIST', $user);
 
-        if(!$hasRight){
-            throw new AccessDeniedException("Vous n'avez pas le droit d'accéder à la liste de cette personne");
-        }
 
         return $this->render('account/list_gifts.html.twig',[
             'user' => $child,

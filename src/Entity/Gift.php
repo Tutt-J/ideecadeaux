@@ -50,6 +50,17 @@ class Gift
      */
     private $giftGroup;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gifts")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Child::class, inversedBy="gifts")
+     */
+    private $child;
+
     public function __construct()
     {
         $this->giftGroup = new ArrayCollection();
@@ -140,6 +151,30 @@ class Gift
     public function removeGiftGroup(GiftGroup $giftGroup): self
     {
         $this->giftGroup->removeElement($giftGroup);
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getChild(): ?Child
+    {
+        return $this->child;
+    }
+
+    public function setChild(?Child $child): self
+    {
+        $this->child = $child;
 
         return $this;
     }

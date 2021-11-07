@@ -20,3 +20,7 @@
 .visually-hidden{
   display:none;
 }
+
+.sidebar.toggled .nav-item .nav-link span{
+  font-size:0.9em !important;
+}

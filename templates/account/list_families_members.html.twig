@@ -19,7 +19,6 @@
                         <th>Prenom</th>
                         <th class="d-none d-lg-table-cell">Email</th>
                         <th class="d-none d-lg-table-cell">Adresse</th>
-                        <th>Actions</th>
                     </tr>
                     </thead>
                     <tfoot>
@@ -28,7 +27,6 @@
                         <th>Prenom</th>
                         <th class="d-none d-lg-table-cell">Email</th>
                         <th class="d-none d-lg-table-cell">Adresse</th>
-                        <th>Actions</th>
                     </tr>
                     </tfoot>
                     <tbody>
@@ -38,9 +36,6 @@
                             <td>{{ member.firstName }}</td>
                             <td class="d-none d-lg-table-cell">{{ member.email }}</td>
                             <td class="d-none d-lg-table-cell">{{ member.street }} {{ member.postalCode }} {{ member.city }} {{ member.country }}</td>
-                            <td>
-                                <a href="{{ path('viewAllList', {'id': member.id}) }}" title="Voir les listes de cadeaux"><i class="fas fa-clipboard-list"></i></a>
-                            </td>
                         </tr>
                             {% for child in member.children %}
                                 <tr>
@@ -48,9 +43,6 @@
                                     <td>{{child.firstName }}</td>
                                     <td class="d-none d-lg-table-cell">{{ member.email }}</td>
                                     <td class="d-none d-lg-table-cell">{{ member.street }} {{ member.postalCode }} {{ member.city }} {{ member.country }}</td>
-                                    <td>
-                                        <a href="{{ path('viewChildAllList', {'id': child.id}) }}" title="Voir les listes de cadeaux"><i class="fas fa-clipboard-list"></i></a>
-                                    </td>
                                 </tr>
                             {% endfor %}
                     {% endfor %}
