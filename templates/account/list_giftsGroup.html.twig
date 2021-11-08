@@ -37,12 +37,12 @@
                             %}
                                 <tr>
                                     <td class="first-uppercase">{{ list.name }}
-                                            par
+                                            par<strong>
                                             {% if list.child is not null %}
                                                 {{ list.child.firstName ~" "~list.child.lastName }}
                                             {% else %}
                                                 {{ list.askBy.firstName ~" "~list.askBy.lastName }}
-                                            {% endif %}
+                                            {% endif %}</strong>
                                         </td>
                                     <td >{{ list.expireDate |date('d/m/Y') }}</td>
                                     <td>
