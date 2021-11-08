@@ -3,7 +3,7 @@
 {% block body %}
     <!-- Page Heading -->
         <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) {% if user is defined %}de {{ user.firstName }} {{ user.lastName }} {%endif%}</h1>
+            <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) {% if user is defined %}de <span class="first-uppercase">{{ user.firstName }}</span> <span class="first-uppercase">{{ user.lastName }}</span> {%endif%}</h1>
             {% if user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id)) %}
                 <a href="{{path('createList')}}" class="btn btn-primary"><i class="fas fa-plus pr-3"></i>Créer une liste</a>
             {% endif %}
@@ -35,7 +35,7 @@
                         {% if list.expireDate|date('Y-m-d') > "now"|date('Y-m-d') or (user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id))) %}
                             {% if list.child is null or user is not defined %}
                                 <tr>
-                                    <td>{{ list.name }}
+                                    <td class="first-uppercase">{{ list.name }}
                                         {% if user is not defined %}
                                             par
                                             {% if list.child is not null %}

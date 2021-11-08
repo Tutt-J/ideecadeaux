@@ -3,7 +3,7 @@
 {% block body %}
     <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-2 text-gray-800">Membres de mes familles</h1>
+        <h1 class="h3 mb-2 text-gray-800">Carnet d'adresses</h1>
     </div>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
@@ -34,14 +34,14 @@
                         <tr>
                             <td>{{ member.lastName }}</td>
                             <td>{{ member.firstName }}</td>
-                            <td class="d-none d-lg-table-cell">{{ member.email }}</td>
+                            <td class="d-none d-lg-table-cell"><a href="{{ "mailto:"~member.email }}">{{ member.email }}</a></td>
                             <td class="d-none d-lg-table-cell">{{ member.street }} {{ member.postalCode }} {{ member.city }} {{ member.country }}</td>
                         </tr>
                             {% for child in member.children %}
                                 <tr>
                                     <td>{{ child.lastName }}</td>
                                     <td>{{child.firstName }}</td>
-                                    <td class="d-none d-lg-table-cell">{{ member.email }}</td>
+                                    <td class="d-none d-lg-table-cell"><a href="{{ "mailto:"~member.email }}">{{ member.email }}</a></td>
                                     <td class="d-none d-lg-table-cell">{{ member.street }} {{ member.postalCode }} {{ member.city }} {{ member.country }}</td>
                                 </tr>
                             {% endfor %}

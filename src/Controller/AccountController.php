@@ -369,7 +369,7 @@ class AccountController extends AbstractController
     public function deleteList(GiftGroup $giftGroup): Response
     {
         if($giftGroup->getExpireDate() > new DateTime()){
-            $this->addFlash('error', 'Vous ne pouvez pas supprimer une liste qui n\'est pas expirée');
+            $this->addFlash('error', 'Vous ne pouvez pas supprimer une liste qui n\'est pas expirée.');
         } else{
             $em = $this->getDoctrine()->getManager();
 
