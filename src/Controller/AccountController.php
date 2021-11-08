@@ -428,7 +428,7 @@ class AccountController extends AbstractController
 
 
         return $this->render('account/list_gifts.html.twig',[
-            'user' => $child,
+            'user' => $user,
             'gifts_group' =>  $giftGroup
         ]);
     }

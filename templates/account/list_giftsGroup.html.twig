@@ -32,21 +32,26 @@
                     </tfoot>
                     <tbody>
                     {% for list in giftGroups %}
-                        {% if list.expireDate|date('Y-m-d') > "now"|date('Y-m-d') or (user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id))) %}
-                            {% if list.child is null or user is not defined %}
+                        {% if list.expireDate|date('Y-m-d') > "now"|date('Y-m-d')
+                            or (user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id)))
+                            %}
                                 <tr>
                                     <td class="first-uppercase">{{ list.name }}
-                                        {% if user is not defined %}
                                             par
                                             {% if list.child is not null %}
                                                 {{ list.child.firstName ~" "~list.child.lastName }}
                                             {% else %}
                                                 {{ list.askBy.firstName ~" "~list.askBy.lastName }}
                                             {% endif %}
-                                        {% endif %}</td>
+                                        </td>
                                     <td >{{ list.expireDate |date('d/m/Y') }}</td>
                                     <td>
+                                    {% if list.child is null %}
                                         <a href="{{ path('viewOneList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                    {% else  %}
+                                        <a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                    {% endif %}
+                                        {% if user is defined and list.askBy == app.user and list.gifts is empty %}
                                         <button
                                                 class="btn btn-link"
                                                 data-bs-body="{{ "Voulez-vous supprimer la liste " ~ list.name }}"
@@ -58,28 +63,9 @@
                                                 title="Supprimer la liste">
                                             <i class="fas fa-trash-alt text-danger"></i>
                                         </button>
+                                            {% endif %}
                                     </td>
                                 </tr>
-                             {% elseif (user is defined and list.child == user) or list.child.parent == app.user %}
-                                 <tr>
-                                     <td>{{ list.name }}</td>
-                                     <td >{{ list.expireDate |date('d/m/Y') }}</td>
-                                     <td>
-                                         <a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
-                                         <button
-                                                 class="btn btn-link"
-                                                 data-bs-body="{{ "Voulez-vous supprimer la liste " ~ list.name }}"
-                                                 data-bs-button="Supprimer"
-                                                 data-bs-url="{{ path("deleteList", {'id' : list.id}) }}"
-                                                 data-bs-title="{{ "Supprimer une liste" }}"
-                                                 data-bs-toggle="modal"
-                                                 data-bs-target="#deleteModal"
-                                                 title="Supprimer la liste">
-                                             <i class="fas fa-trash-alt text-danger"></i>
-                                         </button>
-                                     </td>
-                                 </tr>
-                            {% endif %}
                         {% endif %}
                     {% endfor %}
                     </tbody>

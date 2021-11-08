@@ -8,13 +8,9 @@
                 <a href="{{path('askGift')}}" class="btn btn-primary"><i class="fas fa-plus pr-3"></i>Ajouter un cadeau</a>
             {% else %}
                 <h1 class="col-12 h3 mb-2 text-gray-800 first-uppercase">{{ gifts_group.name }} - <span class="first-uppercase">{{ user.firstName }}</span> <span class="first-uppercase">{{ user.lastName }}</span> </h1>
-                {% if user.street is not defined %}
-                    {% set userForAddress = user.parent %}
-                {% else %}
-                        {% set userForAddress = user %}
-                {% endif %}
-                <p class="col-12 h4"><em>Au besoin, envoyer à : {{ userForAddress.street }} {{ userForAddress.postalCode }} {{ userForAddress.city }} {{ userForAddress.country }} -
-                        <a href="{{ "mailto:"~userForAddress.email }}">{{ userForAddress.email }}</a></em></p>
+
+                <p class="col-12 h4"><em>Au besoin, envoyer à : {{ user.street }} {{ user.postalCode }} {{ user.city }} {{ user.country }} -
+                        <a href="{{ "mailto:"~user.email }}">{{ user.email }}</a></em></p>
             {% endif %}
 
         </div>
