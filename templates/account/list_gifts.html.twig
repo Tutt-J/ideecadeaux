@@ -64,31 +64,38 @@
 
                             </td>
                             <td>
-                            {% if user != app.user %}
+                            {% if user != app.user or (gift.child.parent is defined and gift.child.parent == app.user) %}
                                     {% if gift.alreadyBuy == 1 %}
                                         Déjà réservé
                                     {% else %}
                                         <a href="{{ path('buyGift', {'id' : user.id, 'gift': gift.id}) }}" title="Réserver">Je l'ai acheté</a>
-                                        -
+                                        <br>
                                         <button
                                                 class="btn btn-link p-0"
                                                 data-bs-id="{{ gift.id }}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#formModal"
                                                 title="Participer">
-                                                Participer à la cagnotte
+                                                Participer à la cagnotte/Modifier ma participation
                                         </button>
                                         {% set totalAmount = 0 %}
                                         {% for pot in gift.pots %}
-                                            {% if pot.user == app.user %}
-                                                Votre participation : {{ pot.amount }}€
-                                            {% endif %}
                                             {% set totalAmount = totalAmount + pot.amount %}
                                         {% endfor %}
-
-                                        (Montant actuel : {{ totalAmount }}€)
+                                        <br><strong class="text-dark">Montant total actuel : {{ totalAmount }}€ ({{ totalAmount * (100/gift.price) | number_format(3) }}%)</strong>
+                                            <ul>
+                                                {% for pot in gift.pots %}
+                                                    {% if pot.user == app.user %}
+                                                        <li>Vous - {{ pot.amount }}€</li>
+                                                    {% else %}
+                                                   <li>{{ pot.user.firstName }} - {{ pot.amount }}€</li>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </ul>
+                                        <br>
                                     {% endif %}
-                             {% else %}
+                             {% endif %}
+                             {% if user == app.user or (gift.child.parent is defined and gift.child.parent == app.user) %}
                                  <a href="{{ path('editGift', {'id' : gift.id}) }}" title="Editer"><i class="fas fa-pen"></i></a>
                                  <button
                                          class="btn btn-link"
@@ -112,6 +119,7 @@
         </div>
     </div>
     {% include "account/_modal.html.twig" %}
-    {% include "account/_form_modal.html.twig" %}
-
+    {% if form is defined %}
+        {% include "account/_form_modal.html.twig" %}
+    {% endif %}
 {% endblock %}

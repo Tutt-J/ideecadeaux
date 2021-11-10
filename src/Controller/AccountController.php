@@ -17,6 +17,7 @@ use App\Form\UserFamilyFormType;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -195,6 +196,8 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/mes-enfants/supprimer/{id}', name: 'deleteChild')]
     public function deleteChild(Child $child): Response
     {
+        $this->denyAccessUnlessGranted('EDIT', $child);
+
         $em = $this->getDoctrine()->getManager();
 
         foreach ($child->getGifts() as $gift){
@@ -245,21 +248,12 @@ class AccountController extends AbstractController
 
         $form = $this->createForm(GiftFormType::class, $gift);
 
-//        if(!$session->get('giftCopie')){
-//            $session->set('giftCopie', clone $gift);
-//        }
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $em = $this->getDoctrine()->getManager();
-//            foreach ($session->get('giftCopie')->getGiftGroup() as $group){
-////                $em->persist($group);
-//
-//                $gift->addGiftGroup($group);
-//
-//            }
             $em->persist($gift);
             $em->flush();
 
@@ -279,6 +273,8 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-mes-cadeaux/supprimer/{id}', name: 'deleteGift')]
     public function deleteGift(Gift $gift): Response
     {
+        $this->denyAccessUnlessGranted('EDIT', $gift);
+
         if(!$gift->getGiftGroup()->isEmpty()){
             $this->addFlash('error', 'Vous n\'avez pas le droit de supprimer un cadeau présent dans une liste. Supprimez d\'abord la liste.');
         } else{
@@ -300,14 +296,26 @@ class AccountController extends AbstractController
         $em = $this->getDoctrine()->getManager();
         $em->persist($gift);
         $em->flush();
+//TODO: add redirect custom, maybe session variable to put url
         return $this->redirectToRoute('viewOneList', ['id' => $user->getId()]);
     }
 
     #[Route('/mon-compte/voir-mes-cadeaux', name: 'viewMyGifts')]
-    public function viewMyGifts(): Response
+    public function viewMyGifts(Request $request): Response
     {
+
+        $pot = new Pot();
+        $form = $this->createForm(PotFormType::class, $pot);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->changePot($form, $pot);
+        }
+
         return $this->render('account/list_gifts.html.twig',[
-            'user' => $this->getUser()
+            'user' => $this->getUser(),
+            'form' => $form->createView()
         ]);
     }
 
@@ -370,6 +378,8 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-les-listes/supprimer/{id}', name: 'deleteList')]
     public function deleteList(GiftGroup $giftGroup): Response
     {
+        $this->denyAccessUnlessGranted('EDIT', $giftGroup);
+
         if($giftGroup->getExpireDate() > new DateTime()){
             $this->addFlash('error', 'Vous ne pouvez pas supprimer une liste qui n\'est pas expirée.');
         } else{
@@ -413,6 +423,60 @@ class AccountController extends AbstractController
     {
         $user = $giftGroup->getAskBy();
 
+        return $this->viewList($giftGroup, $request, $user);
+    }
+
+    #[Route('/mon-compte/voir-une-liste/enfant/{id}', name: 'viewChildList')]
+    public function viewChildList(GiftGroup $giftGroup, Request $request): Response
+    {
+        $child = $giftGroup->getChild();
+        $user = $child->getParent();
+        return $this->viewList($giftGroup, $request, $user);
+    }
+
+    /**
+     * @param FormInterface $form
+     * @param Pot $pot
+     */
+    public function changePot(FormInterface $form, Pot $pot): void
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $potDB = $this->getDoctrine()
+            ->getRepository(Pot::class)
+            ->findOneBy([
+                "gift" => $form->get('id')->getData(),
+                "user" => $this->getUser()->getId()
+            ]);
+
+        if ($potDB) {
+            $potDB->setAmount($form->getData()->getAmount());
+            if ($form->getData()->getAmount() > 0) {
+                $em->persist($potDB);
+            } else {
+                $em->remove($potDB);
+            }
+        } else {
+            $gift = $this->getDoctrine()
+                ->getRepository(Gift::class)
+                ->findOneBy(['id' => $form->get('id')->getData()]);
+            $pot->setUser($this->getUser());
+            $pot->setGift($gift);
+            $em->persist($pot);
+        }
+
+        $em->flush();
+        $this->addFlash('success', 'Votre participation a été prise en compte');
+    }
+
+    /**
+     * @param GiftGroup $giftGroup
+     * @param Request $request
+     * @param User|null $user
+     * @return Response
+     */
+    public function viewList(GiftGroup $giftGroup, Request $request, ?User $user): Response
+    {
         $this->denyAccessUnlessGranted('LIST', $user);
 
         $pot = new Pot();
@@ -421,56 +485,15 @@ class AccountController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-
-            $potDB= $this->getDoctrine()
-                ->getRepository(Pot::class)
-                ->findOneBy([
-                    "gift" => $form->get('id')->getData(),
-                    "user" => $this->getUser()->getId()
-                ]);
-
-            if($potDB){
-                $potDB->setAmount($form->getData()->getAmount());
-                if($form->getData()->getAmount() > 0){
-                    $em->persist($potDB);
-                } else{
-                    $em->remove($potDB);
-                }
-            } else{
-                $gift = $this->getDoctrine()
-                    ->getRepository(Gift::class)
-                    ->findOneBy(['id' => $form->get('id')->getData()]);
-                $pot->setUser($this->getUser());
-                $pot->setGift($gift);
-                $em->persist($pot);
-            }
-
-            $em->flush();
-            $this->addFlash('success', 'Votre participation a été prise en compte');
+            $this->changePot($form, $pot);
         }
 
-        return $this->render('account/list_gifts.html.twig',[
+        return $this->render('account/list_gifts.html.twig', [
             'user' => $user,
-            'gifts_group' =>  $giftGroup,
+            'gifts_group' => $giftGroup,
             'form' => $form->createView()
         ]);
     }
-
-    #[Route('/mon-compte/voir-une-liste/enfant/{id}', name: 'viewChildList')]
-    public function viewChildList(GiftGroup $giftGroup): Response
-    {
-        $child = $giftGroup->getChild();
-        $user = $child->getParent();
-        $this->denyAccessUnlessGranted('LIST', $user);
-
-
-        return $this->render('account/list_gifts.html.twig',[
-            'user' => $user,
-            'gifts_group' =>  $giftGroup
-        ]);
-    }
-
 
 
 }

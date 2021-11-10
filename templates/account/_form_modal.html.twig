@@ -11,6 +11,13 @@
                 {{ form_label(form.amount) }}
                 {{ form_widget(form.amount) }}
                 {{ form_errors(form.amount) }}
+                <small>Indiquer 0 pour retirer sa participation</small>
+                <div class="mt-3">
+                    {{ form_label(form.save) }}
+                    {{ form_widget(form.save) }}
+                </div>
+
+
                 {{ form_end(form) }}
             </div>
 
