@@ -25,6 +25,10 @@
   font-size:0.9em !important;
 }
 
-.first-uppercase:first-letter {
-  text-transform: uppercase;
+.first-uppercase{
+  display:inline-block;
+  &:first-letter {
+    text-transform: uppercase;
+  }
+
 }

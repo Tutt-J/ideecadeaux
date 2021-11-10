@@ -73,4 +73,24 @@ if(deleteModal){
 
 }
 
+var formModal = document.getElementById('formModal')
+if(formModal){
+    formModal.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        var id = button.getAttribute('data-bs-id')
+
+
+        // If necessary, you could initiate an AJAX request here
+        // and then do the updating in a callback.
+        //
+        // Update the modal's content.
+        var modalId = formModal.querySelector('#pot_form_id')
+
+        modalId.value = id;
+    })
+
+}
+
 

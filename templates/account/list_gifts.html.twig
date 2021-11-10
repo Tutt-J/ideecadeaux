@@ -69,6 +69,24 @@
                                         Déjà réservé
                                     {% else %}
                                         <a href="{{ path('buyGift', {'id' : user.id, 'gift': gift.id}) }}" title="Réserver">Je l'ai acheté</a>
+                                        -
+                                        <button
+                                                class="btn btn-link p-0"
+                                                data-bs-id="{{ gift.id }}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#formModal"
+                                                title="Participer">
+                                                Participer à la cagnotte
+                                        </button>
+                                        {% set totalAmount = 0 %}
+                                        {% for pot in gift.pots %}
+                                            {% if pot.user == app.user %}
+                                                Votre participation : {{ pot.amount }}€
+                                            {% endif %}
+                                            {% set totalAmount = totalAmount + pot.amount %}
+                                        {% endfor %}
+
+                                        (Montant actuel : {{ totalAmount }}€)
                                     {% endif %}
                              {% else %}
                                  <a href="{{ path('editGift', {'id' : gift.id}) }}" title="Editer"><i class="fas fa-pen"></i></a>
@@ -94,4 +112,6 @@
         </div>
     </div>
     {% include "account/_modal.html.twig" %}
+    {% include "account/_form_modal.html.twig" %}
+
 {% endblock %}

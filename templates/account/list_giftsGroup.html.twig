@@ -2,12 +2,12 @@
 
 {% block body %}
     <!-- Page Heading -->
-        <div class="d-sm-flex align-items-center justify-content-between mb-4">
-            <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) {% if user is defined %}de <span class="first-uppercase">{{ user.firstName }}</span> <span class="first-uppercase">{{ user.lastName }}</span> {%endif%}</h1>
-            {% if user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id)) %}
-                <a href="{{path('createList')}}" class="btn btn-primary"><i class="fas fa-plus pr-3"></i>Créer une liste</a>
-            {% endif %}
-        </div>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-2 text-gray-800">Listes de cadeau(x) {% if user is defined %}de {{ user.firstName }} {{ user.lastName }} {%endif%}</h1>
+        {% if user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id)) %}
+            <a href="{{path('createList')}}" class="btn btn-primary"><i class="fas fa-plus pr-3"></i>Créer une liste</a>
+        {% endif %}
+    </div>
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -32,26 +32,21 @@
                     </tfoot>
                     <tbody>
                     {% for list in giftGroups %}
-                        {% if list.expireDate|date('Y-m-d') > "now"|date('Y-m-d')
-                            or (user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id)))
-                            %}
+                        {% if list.expireDate|date('Y-m-d') > "now"|date('Y-m-d') or (user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id))) %}
+                            {% if list.child is null or user is not defined %}
                                 <tr>
-                                    <td class="first-uppercase">{{ list.name }}
-                                            par<strong>
+                                    <td><a href="{{ path('viewOneList', {'id': list.id}) }}" class="first-uppercase" title="Voir la liste de cadeaux">{{ list.name }}
+                                        {% if user is not defined %}
+                                            par
                                             {% if list.child is not null %}
                                                 {{ list.child.firstName ~" "~list.child.lastName }}
                                             {% else %}
                                                 {{ list.askBy.firstName ~" "~list.askBy.lastName }}
-                                            {% endif %}</strong>
-                                        </td>
+                                            {% endif %}
+                                        {% endif %}</a></td>
                                     <td >{{ list.expireDate |date('d/m/Y') }}</td>
                                     <td>
-                                    {% if list.child is null %}
                                         <a href="{{ path('viewOneList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
-                                    {% else  %}
-                                        <a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
-                                    {% endif %}
-                                        {% if user is defined and list.askBy == app.user and list.gifts is empty %}
                                         <button
                                                 class="btn btn-link"
                                                 data-bs-body="{{ "Voulez-vous supprimer la liste " ~ list.name }}"
@@ -63,9 +58,28 @@
                                                 title="Supprimer la liste">
                                             <i class="fas fa-trash-alt text-danger"></i>
                                         </button>
-                                            {% endif %}
                                     </td>
                                 </tr>
+                            {% elseif (user is defined and list.child == user) or list.child.parent == app.user %}
+                                <tr>
+                                    <td><a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux" class="first-uppercase">{{ list.name }}</a></td>
+                                    <td >{{ list.expireDate |date('d/m/Y') }}</td>
+                                    <td>
+                                        <a href="{{ path('viewChildList', {'id': list.id}) }}" title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>
+                                        <button
+                                                class="btn btn-link"
+                                                data-bs-body="{{ "Voulez-vous supprimer la liste " ~ list.name }}"
+                                                data-bs-button="Supprimer"
+                                                data-bs-url="{{ path("deleteList", {'id' : list.id}) }}"
+                                                data-bs-title="{{ "Supprimer une liste" }}"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteModal"
+                                                title="Supprimer la liste">
+                                            <i class="fas fa-trash-alt text-danger"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                     </tbody>

@@ -61,9 +61,17 @@ class Gift
      */
     private $child;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Pot::class, mappedBy="gift", orphanRemoval=true)
+     */
+    private $pots;
+
+
     public function __construct()
     {
         $this->giftGroup = new ArrayCollection();
+        $this->pot = new ArrayCollection();
+        $this->pots = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -175,6 +183,36 @@ class Gift
     public function setChild(?Child $child): self
     {
         $this->child = $child;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Pot[]
+     */
+    public function getPots(): Collection
+    {
+        return $this->pots;
+    }
+
+    public function addPot(Pot $pot): self
+    {
+        if (!$this->pots->contains($pot)) {
+            $this->pots[] = $pot;
+            $pot->setGift($this);
+        }
+
+        return $this;
+    }
+
+    public function removePot(Pot $pot): self
+    {
+        if ($this->pots->removeElement($pot)) {
+            // set the owning side to null (unless already changed)
+            if ($pot->getGift() === $this) {
+                $pot->setGift(null);
+            }
+        }
 
         return $this;
     }

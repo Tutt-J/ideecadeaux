@@ -6,11 +6,13 @@ use App\Entity\Child;
 use App\Entity\Family;
 use App\Entity\Gift;
 use App\Entity\GiftGroup;
+use App\Entity\Pot;
 use App\Entity\User;
 use App\Form\ChildFormType;
 use App\Form\FamilyFormType;
 use App\Form\GiftFormType;
 use App\Form\GiftGroupFormType;
+use App\Form\PotFormType;
 use App\Form\UserFamilyFormType;
 use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -407,15 +409,51 @@ class AccountController extends AbstractController
     }
 
     #[Route('/mon-compte/voir-une-liste/{id}', name: 'viewOneList')]
-    public function viewOneList(GiftGroup $giftGroup): Response
+    public function viewOneList(GiftGroup $giftGroup, Request $request): Response
     {
         $user = $giftGroup->getAskBy();
 
         $this->denyAccessUnlessGranted('LIST', $user);
 
+        $pot = new Pot();
+        $form = $this->createForm(PotFormType::class, $pot);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $potDB= $this->getDoctrine()
+                ->getRepository(Pot::class)
+                ->findOneBy([
+                    "gift" => $form->get('id')->getData(),
+                    "user" => $this->getUser()->getId()
+                ]);
+
+            if($potDB){
+                $potDB->setAmount($form->getData()->getAmount());
+                if($form->getData()->getAmount() > 0){
+                    $em->persist($potDB);
+                } else{
+                    $em->remove($potDB);
+                }
+            } else{
+                $gift = $this->getDoctrine()
+                    ->getRepository(Gift::class)
+                    ->findOneBy(['id' => $form->get('id')->getData()]);
+                $pot->setUser($this->getUser());
+                $pot->setGift($gift);
+                $em->persist($pot);
+            }
+
+            $em->flush();
+            $this->addFlash('success', 'Votre participation a été prise en compte');
+        }
+
         return $this->render('account/list_gifts.html.twig',[
             'user' => $user,
-            'gifts_group' =>  $giftGroup
+            'gifts_group' =>  $giftGroup,
+            'form' => $form->createView()
         ]);
     }
 

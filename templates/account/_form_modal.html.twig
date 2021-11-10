@@ -1,0 +1,19 @@
+<!-- Modal -->
+<div class="modal fade" id="formModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Proposer une participation en cagnotte</h5>
+            </div>
+            <div class="modal-body">
+                <p>Quel montant pouvez-vous mettre ?</p>
+                {{ form_start(form) }}
+                {{ form_label(form.amount) }}
+                {{ form_widget(form.amount) }}
+                {{ form_errors(form.amount) }}
+                {{ form_end(form) }}
+            </div>
+
+        </div>
+    </div>
+</div>
