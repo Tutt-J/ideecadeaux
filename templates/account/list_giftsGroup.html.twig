@@ -32,14 +32,20 @@
                     </tfoot>
                     <tbody>
                     {% for list in giftGroups %}
+                        {% if (user is not defined and list.child is null) or (user is defined and list.child is null) %}
+
+                        {% elseif (user is not defined and list.child is not null) or (user is defined and list.child is not null) %}
+
+                        {% endif %}
                         {% if list.expireDate|date('Y-m-d') > "now"|date('Y-m-d') or (user is defined and (user == app.user or (user.parent is defined and user.parent.id == app.user.id))) %}
                                 <tr>
-                                    <td>ggg
+                                    <td>
                                         <a href="
                                             {#BUG ICI CAR PAS d'affichage sur ma liste#}
-                                            {% if list.child is null and user is not defined %}
+                                             {% if (user is not defined and list.child is null) or (user is defined and list.child is null) %}
+
                                                 {{ path('viewOneList', {'id': list.id}) }}
-                                            {% elseif (user is defined and list.child == user) or (list.child is not null and list.child.parent == app.user)%}
+                                            {% elseif (user is not defined and list.child is not null) or (user is defined and list.child is not null) %}
                                                 {{ path('viewChildList', {'id': list.id}) }}
                                             {% endif %}" class="first-uppercase" title="Voir la liste de cadeaux">{{ list.name }}
                                             par
@@ -52,9 +58,9 @@
                                     <td >{{ list.expireDate |date('d/m/Y') }}</td>
                                     <td>
                                         <a href="
-                                            {% if list.child is null and user is not defined %}
+                                             {% if (user is not defined and list.child is null) or (user is defined and list.child is null) %}
                                                 {{ path('viewOneList', {'id': list.id}) }}
-                                            {% elseif (user is defined and list.child == user) or (list.child is not null and list.child.parent == app.user)%}
+                                             {% elseif (user is not defined and list.child is not null) or (user is defined and list.child is not null) %}
                                                 {{ path('viewChildList', {'id': list.id}) }}
                                             {% endif %}
                                         " title="Voir la liste de cadeaux"><i class="fas fa-clipboard-list"></i></a>

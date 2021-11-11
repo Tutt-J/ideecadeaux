@@ -21,6 +21,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Uid\Uuid;
@@ -290,14 +291,14 @@ class AccountController extends AbstractController
     }
 
     #[Route('/mon-compte/voir-une-liste/{id}/acheter-un-cadeau/{gift}', name: 'buyGift')]
-    public function buyGift(User $user, Gift $gift): Response
+    public function buyGift(User $user, Gift $gift, Session $session): Response
     {
         $gift->setAlreadyBuy(true);
         $em = $this->getDoctrine()->getManager();
         $em->persist($gift);
         $em->flush();
 //TODO: add redirect custom, maybe session variable to put url
-        return $this->redirectToRoute('viewOneList', ['id' => $user->getId()]);
+        return $this->redirectToRoute($session->get('refererBuyGift')['path'], ['id' => $session->get('refererBuyGift')['giftGroup']]);
     }
 
     #[Route('/mon-compte/voir-mes-cadeaux', name: 'viewMyGifts')]
@@ -419,18 +420,30 @@ class AccountController extends AbstractController
     }
 
     #[Route('/mon-compte/voir-une-liste/{id}', name: 'viewOneList')]
-    public function viewOneList(GiftGroup $giftGroup, Request $request): Response
+    public function viewOneList(GiftGroup $giftGroup, Request $request, Session $session): Response
     {
         $user = $giftGroup->getAskBy();
+        $session->set('refererBuyGift', [
+                'path' =>  'viewOneList',
+                'giftGroup' => $giftGroup->getId()
+            ]
+        );
 
         return $this->viewList($giftGroup, $request, $user);
     }
 
     #[Route('/mon-compte/voir-une-liste/enfant/{id}', name: 'viewChildList')]
-    public function viewChildList(GiftGroup $giftGroup, Request $request): Response
+    public function viewChildList(GiftGroup $giftGroup, Request $request, Session $session): Response
     {
         $child = $giftGroup->getChild();
         $user = $child->getParent();
+
+        $session->set('refererBuyGift', [
+                'path' =>  'viewChildList',
+                'giftGroup' => $giftGroup->getId()
+            ]
+        );
+
         return $this->viewList($giftGroup, $request, $user);
     }
 

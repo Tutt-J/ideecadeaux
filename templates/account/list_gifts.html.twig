@@ -7,7 +7,13 @@
                 <h1 class="h3 mb-2 text-gray-800">Mes cadeaux</h1>
                 <a href="{{path('askGift')}}" class="btn btn-primary"><i class="fas fa-plus pr-3"></i>Ajouter un cadeau</a>
             {% else %}
-                <h1 class="col-12 h3 mb-2 text-gray-800 first-uppercase">{{ gifts_group.name }} - <span class="first-uppercase">{{ user.firstName }}</span> <span class="first-uppercase">{{ user.lastName }}</span> </h1>
+                <h1 class="col-12 h3 mb-2 text-gray-800 first-uppercase">{{ gifts_group.name }} -
+                    {% if gifts_group.child is not null %}
+                        <span class="first-uppercase">{{ gifts_group.child.firstName }} {{ gifts_group.child.lastName }}</span>
+                    {% else %}
+                        <span class="first-uppercase">{{ user.firstName }} {{ user.lastName }}</span>
+                    {% endif %}
+                </h1>
 
                 <p class="col-12 h4"><em>Au besoin, envoyer à : {{ user.street }} {{ user.postalCode }} {{ user.city }} {{ user.country }} -
                         <a href="{{ "mailto:"~user.email }}">{{ user.email }}</a></em></p>
