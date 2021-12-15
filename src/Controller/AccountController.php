@@ -258,9 +258,6 @@ class AccountController extends AbstractController
             $em->persist($gift);
             $em->flush();
 
-            $session->remove('giftCopie');
-
-
             $this->addFlash('success', 'Le cadeau a été modifié');
             return $this->redirectToRoute("viewMyGifts");
         }
@@ -293,7 +290,7 @@ class AccountController extends AbstractController
     #[Route('/mon-compte/voir-une-liste/{id}/acheter-un-cadeau/{gift}', name: 'buyGift')]
     public function buyGift(User $user, Gift $gift, Session $session): Response
     {
-        $gift->setAlreadyBuy(true);
+        $gift->setBuyBy($this->getUser());
         $em = $this->getDoctrine()->getManager();
         $em->persist($gift);
         $em->flush();

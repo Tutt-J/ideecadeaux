@@ -36,11 +36,6 @@ class Gift
 
 
     /**
-     * @ORM\Column(type="boolean")
-     */
-    private $already_buy;
-
-    /**
      * @ORM\Column(type="float")
      */
     private $price;
@@ -65,6 +60,11 @@ class Gift
      * @ORM\OneToMany(targetEntity=Pot::class, mappedBy="gift", orphanRemoval=true)
      */
     private $pots;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private $buy_by;
 
 
     public function __construct()
@@ -115,17 +115,7 @@ class Gift
         return $this;
     }
 
-    public function getAlreadyBuy(): ?bool
-    {
-        return $this->already_buy;
-    }
 
-    public function setAlreadyBuy(bool $already_buy): self
-    {
-        $this->already_buy = $already_buy;
-
-        return $this;
-    }
 
     public function getPrice(): ?float
     {
@@ -216,4 +206,17 @@ class Gift
 
         return $this;
     }
+
+    public function getBuyBy(): ?User
+    {
+        return $this->buy_by;
+    }
+
+    public function setBuyBy(?User $buy_by): self
+    {
+        $this->buy_by = $buy_by;
+
+        return $this;
+    }
+
 }

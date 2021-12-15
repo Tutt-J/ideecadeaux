@@ -21,7 +21,23 @@ $(document).ready(function() {
         }
     })
 
+    let form = document.querySelector("form[name='gift_form']");
+
+    if(form != null){
+        form.addEventListener("submit", function(e){
+            e.preventDefault();
+            $('#gift_form_giftGroup input').each((index, currentElement) => {
+                if(currentElement.checked){
+                    currentElement.disabled = false;
+                }
+            })
+            this.submit()
+        });
+    }
+
+
     $('table').DataTable({
+        "pageLength": 50,
         language: {
             url: '//cdn.datatables.net/plug-ins/1.11.3/i18n/fr_fr.json'
         }

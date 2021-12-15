@@ -71,8 +71,20 @@
                             </td>
                             <td>
                             {% if user != app.user or (gift.child.parent is defined and gift.child.parent == app.user) %}
-                                    {% if gift.alreadyBuy == 1 %}
-                                        Déjà réservé
+                                    {% if gift.buyBy is not null %}
+                                        <p><strong>Déjà réservé par {{ gift.buyBy.firstName ~" "~gift.buyBy.lastname }}</strong></p>
+                                        {% if gift.pots is not empty %}
+                                            <p><em>Avec la participation de :</em></p>
+                                        <ul>
+                                            {% for pot in gift.pots %}
+                                                {% if pot.user == app.user %}
+                                                    <li>Vous - {{ pot.amount }}€</li>
+                                                {% else %}
+                                                    <li>{{ pot.user.firstName }} - {{ pot.amount }}€</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </ul>
+                                            {% endif %}
                                     {% else %}
                                         <a href="{{ path('buyGift', {'id' : user.id, 'gift': gift.id}) }}" title="Réserver">Je l'ai acheté</a>
                                         <br>
