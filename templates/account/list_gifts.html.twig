@@ -100,7 +100,7 @@
                                         {% for pot in gift.pots %}
                                             {% set totalAmount = totalAmount + pot.amount %}
                                         {% endfor %}
-                                        <br><strong class="text-dark">Montant total actuel : {{ totalAmount }}€ ({{ totalAmount * (100/gift.price) | number_format(3) }}%)</strong>
+                                        <br><strong class="text-dark">Montant total actuel : {{ totalAmount }}€ ({{ (totalAmount * (100/gift.price)) | number_format(2) }}%)</strong>
                                             <ul>
                                                 {% for pot in gift.pots %}
                                                     {% if pot.user == app.user %}
